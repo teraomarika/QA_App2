@@ -11,6 +11,9 @@ import android.widget.TextView
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_setting.*
 
+import android.view.View
+
+
 class SettingActivity : AppCompatActivity() {
 
     private lateinit var mDataBaseReference: DatabaseReference
@@ -19,10 +22,11 @@ class SettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
 
-        // Preferenceから表示名を取得してEditTextに反映させる
+        // Preferenceから表示名を 取得してEditTextに反映させる
         val sp = PreferenceManager.getDefaultSharedPreferences(this)
         val name = sp.getString(NameKEY, "")
-        val nameText = findViewById<TextView>(R.id.nameText)
+        //val nameText = findViewById<TextView>(R.id.nameText)
+        val nameText = findViewById<View>(R.id.nameText) as TextView
         nameText.setText(name)
 
         mDataBaseReference = FirebaseDatabase.getInstance().reference
