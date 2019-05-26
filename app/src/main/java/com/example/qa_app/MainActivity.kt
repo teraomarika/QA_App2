@@ -20,6 +20,7 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import android.util.Base64  //追加する
+import android.util.Log
 import android.widget.ListView
 import android.widget.TextView
 
@@ -156,6 +157,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mListView = findViewById(R.id.listView)
         mAdapter = QuestionsListAdapter(this)
         mQuestionArrayList = ArrayList<Question>()
+        Log.d("aaa",mQuestionArrayList.toString())
         mAdapter.notifyDataSetChanged()
         // --- ここまで追加する ---
         mListView.setOnItemClickListener { parent, view, position, id ->

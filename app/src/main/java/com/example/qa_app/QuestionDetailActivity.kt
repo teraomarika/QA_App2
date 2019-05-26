@@ -35,7 +35,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>
-
+            Log.d("aqaqaqaqaqaqa","aqaqqqaqaqaqaqaqa")
             val answerUid = dataSnapshot.key ?: ""
 
             for (answer in mQuestion.answers) {
@@ -56,7 +56,25 @@ class QuestionDetailActivity : AppCompatActivity() {
         }
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
+            val map = dataSnapshot.value as Map<String, String>
+            Log.d("aqaqaqaqaqaqa","aqaqqqaqaqaqaqaqa")
+            val answerUid = dataSnapshot.key ?: ""
 
+            for (answer in mQuestion.answers) {
+                // 同じAnswerUidのものが存在しているときは何もしない
+                if (answerUid == answer.answerUid) {
+                    return
+                }
+            }
+
+            val body = map["body"] ?: ""
+            val name = map["name"] ?: ""
+            val uid = map["uid"] ?: ""
+
+            val answer = Answer(body, name, uid, answerUid)
+            mQuestion.answers.add(answer)
+            listView.adapter = mAdapter
+            mAdapter.notifyDataSetChanged()
         }
 
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
@@ -73,29 +91,51 @@ class QuestionDetailActivity : AppCompatActivity() {
     }
 
 
-    override fun onResume() {
-        super.onResume()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        var user = FirebaseAuth.getInstance().currentUser
         setContentView(R.layout.activity_question_detail)
         var toastButton: Button = findViewById(R.id.show_toast_button)
 
-        if (checkFlag == false) {
-            checkFlag = true
-            Toast.makeText(this, "テスメッセージです", Toast.LENGTH_SHORT).show()
-            toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
-            toastButton.text = "お気に入り登録を外す"
-            toastButton.shadowRadius
-        } else {
-            checkFlag = false
-            Toast.makeText(this, "テトメッセージです2", Toast.LENGTH_SHORT).show()
-            toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
-            toastButton.text = "お気に入り登録をする"
-            toastButton.shadowRadius
+        //val dataBaseReference = FirebaseDatabase.getInstance().reference
+
+
+
+        toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
+        toastButton.text = "お気に入り登録をする"
+        toastButton.setOnClickListener() {
+            var user1 = FirebaseAuth.getInstance().currentUser
+            val dataBaseReference = FirebaseDatabase.getInstance().reference
+            val testRef = dataBaseReference.child(UsersPATH)
+            var aaa = testRef.child(user1!!.uid.toString())
+            Log.d("zzz",aaa.toString())
+            Log.d("xxx",user1!!.uid.toString())
+            aaa.setValue(mQuestion.questionUid)
+            if (checkFlag == false) {
+                checkFlag = true
+                // お気に入りに登録
+                Toast.makeText(this, "テスメッセージです", Toast.LENGTH_SHORT).show()
+                toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
+                toastButton.text = "お気に入り登録を外す"
+                toastButton.shadowRadius
+            } else {
+                checkFlag = false
+                // お気に入りから外す
+                Toast.makeText(this, "テトメッセージです2", Toast.LENGTH_SHORT).show()
+                toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
+                toastButton.text = "お気に入り登録をする"
+                toastButton.shadowRadius
+            }
         }
-        var toastButton1:Button = findViewById(R.id.show_toast_button)
         // 渡ってきたQuestionのオブジェクトを保持する
         var extras = intent.extras
-        mQuestion = extras.get("question") as Question
 
+        mQuestion = extras.get("question") as Question
+        println(mQuestion.questionUid)
+        //val data = HashMap<String, String>()
+        //data["uid"] = FirebaseAuth.getInstance().currentUser!!.uid
+        //data.setValue(mQuestion.questionUid)
+        Log.d("ccccc", "cccc")
         title = mQuestion.title
 
         // ListViewの準備
@@ -114,8 +154,8 @@ class QuestionDetailActivity : AppCompatActivity() {
                 val intent = Intent(applicationContext, LoginActivity::class.java)
                 startActivity(intent)
             } else {
-                toastButton1.isEnabled = true
-                toastButton1.text = "お気に入り登録をする"
+                //toastButton1.isEnabled = true
+                //toastButton1.text = "お気に入り登録をする"
                 // Questionを渡して回答作成画面を起動する
                 // --- ここから ---
                 val intent = Intent(applicationContext, AnswerSendActivity::class.java)
@@ -131,18 +171,6 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
-
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        var user = FirebaseAuth.getInstance().currentUser
-
-
-
-        setContentView(R.layout.activity_question_detail)
-
-
-
 
 
     }
