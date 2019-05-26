@@ -2,6 +2,7 @@ package com.example.qa_app
 
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
@@ -21,6 +22,9 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_question_detail.*
 
 import java.util.HashMap
+import android.provider.MediaStore
+import java.net.URI
+
 
 class QuestionDetailActivity : AppCompatActivity() {
 
@@ -57,7 +61,7 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>
-            Log.d("aqaqaqaqaqaqa","aqaqqqaqaqaqaqaqa")
+            Log.d("っっっっっ","aqaqqqaqaqaqaqaqa")
             val answerUid = dataSnapshot.key ?: ""
 
             for (answer in mQuestion.answers) {
@@ -93,27 +97,41 @@ class QuestionDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var user = FirebaseAuth.getInstance().currentUser
+        var user1 = FirebaseAuth.getInstance().currentUser
         setContentView(R.layout.activity_question_detail)
         var toastButton: Button = findViewById(R.id.show_toast_button)
 
         //val dataBaseReference = FirebaseDatabase.getInstance().reference
+
+        val dataBaseReference = FirebaseDatabase.getInstance().reference
+        var extras = intent.extras
+
+        mQuestion = extras.get("question") as Question
+        val testRef = dataBaseReference.child("favorite").child(user1?.uid.toString()).child(mQuestion.questionUid)
+        var bbb = Uri.parse(testRef.toString())
+        Log.d("bbb",bbb.toString())
+        Log.d("bbb",mQuestion.questionUid)
+        if(bbb.path.contains(mQuestion.questionUid)) {
+            Log.d("aaa","あり")
+
+        } else {
+            Log.d("aaa","なし")
+        }
 
 
 
         toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
         toastButton.text = "お気に入り登録をする"
         toastButton.setOnClickListener() {
-            var user1 = FirebaseAuth.getInstance().currentUser
-            val dataBaseReference = FirebaseDatabase.getInstance().reference
-            val testRef = dataBaseReference.child(UsersPATH)
-            var aaa = testRef.child(user1!!.uid.toString())
-            Log.d("zzz",aaa.toString())
-            Log.d("xxx",user1!!.uid.toString())
-            aaa.setValue(mQuestion.questionUid)
+
             if (checkFlag == false) {
                 checkFlag = true
                 // お気に入りに登録
+                var user1 = FirebaseAuth.getInstance().currentUser
+                val dataBaseReference = FirebaseDatabase.getInstance().reference
+                val testRef = dataBaseReference.child("favorite").child(user1!!.uid.toString()).child(mQuestion.questionUid)
+                Log.d("xxx",user1!!.uid.toString())
+                testRef.setValue(mQuestion.questionUid)
                 Toast.makeText(this, "テスメッセージです", Toast.LENGTH_SHORT).show()
                 toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
                 toastButton.text = "お気に入り登録を外す"
@@ -128,9 +146,7 @@ class QuestionDetailActivity : AppCompatActivity() {
             }
         }
         // 渡ってきたQuestionのオブジェクトを保持する
-        var extras = intent.extras
 
-        mQuestion = extras.get("question") as Question
         println(mQuestion.questionUid)
         //val data = HashMap<String, String>()
         //data["uid"] = FirebaseAuth.getInstance().currentUser!!.uid
@@ -167,11 +183,19 @@ class QuestionDetailActivity : AppCompatActivity() {
 
 
 
-        val dataBaseReference = FirebaseDatabase.getInstance().reference
+
 
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
 
 
+    }
+
+    fun getRealPathFromURI(uri: Uri): String {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = managedQuery(uri, projection, null, null, null)
+        val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor.moveToFirst()
+        return cursor.getString(column_index)
     }
 }
