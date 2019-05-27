@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_question_detail.*
 
 import java.util.HashMap
 import android.provider.MediaStore
+import org.w3c.dom.Comment
 import java.net.URI
 
 
@@ -107,15 +108,21 @@ class QuestionDetailActivity : AppCompatActivity() {
         var extras = intent.extras
 
         mQuestion = extras.get("question") as Question
-        val testRef = dataBaseReference.child("favorite").child(user1?.uid.toString()).child(mQuestion.questionUid)
-        var bbb = Uri.parse(testRef.toString())
+        mQuestion = extras.get("question") as Question
 
-        if(bbb.path.isEmpty()) {
-            Log.d("aaa","あり")
+        var testRef = dataBaseReference.child("favorite").child(user1?.uid.toString())
+        testRef.addChildEventListener = object : ChildEventListener {
+            override fun onChildAdded(p0: DataSnapshot, previousChildName: String?) {
 
-        } else {
-            Log.d("aaa","なし")
+                if(mQuestion.questionUid.toString() == p0.toString()) {
+                    Log.d("aaa","あり")
+                } else {
+                    Log.d("aaa","なし")
+                }
+
+            }
         }
+
 
 
 
