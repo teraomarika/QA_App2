@@ -111,7 +111,8 @@ class QuestionDetailActivity : AppCompatActivity() {
         mQuestion = extras.get("question") as Question
 
         var testRef = dataBaseReference.child("favorite").child(user1?.uid.toString())
-        testRef.addChildEventListener = object : ChildEventListener {
+
+        testRef.addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(p0: DataSnapshot, previousChildName: String?) {
 
                 if(mQuestion.questionUid.toString() == p0.toString()) {
@@ -121,11 +122,23 @@ class QuestionDetailActivity : AppCompatActivity() {
                 }
 
             }
-        }
 
+            override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
+            }
 
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
 
+            }
 
+            override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+
+        })
         toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
         toastButton.text = "お気に入り登録をする"
         toastButton.setOnClickListener() {

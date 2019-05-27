@@ -227,7 +227,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mGenreRef!!.removeEventListener(mEventListener)
         }
         mGenreRef = mDatabaseReference.child(ContentsPATH).child(mGenre.toString())
-        mGenreRef!!.addChildEventListener(mEventListener)
+        mGenreRef!!.add
+        (mEventListener)
         // --- ここまで追加する ---
 
         return true
