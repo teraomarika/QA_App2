@@ -109,9 +109,8 @@ class QuestionDetailActivity : AppCompatActivity() {
         mQuestion = extras.get("question") as Question
         val testRef = dataBaseReference.child("favorite").child(user1?.uid.toString()).child(mQuestion.questionUid)
         var bbb = Uri.parse(testRef.toString())
-        Log.d("bbb",bbb.toString())
-        Log.d("bbb",mQuestion.questionUid)
-        if(bbb.path.contains(mQuestion.questionUid)) {
+
+        if(bbb.path.isEmpty()) {
             Log.d("aaa","あり")
 
         } else {
@@ -123,13 +122,14 @@ class QuestionDetailActivity : AppCompatActivity() {
         toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
         toastButton.text = "お気に入り登録をする"
         toastButton.setOnClickListener() {
-
+            Log.d("aaaaa","fffff")
             if (checkFlag == false) {
                 checkFlag = true
                 // お気に入りに登録
+
                 var user1 = FirebaseAuth.getInstance().currentUser
                 val dataBaseReference = FirebaseDatabase.getInstance().reference
-                val testRef = dataBaseReference.child("favorite").child(user1!!.uid.toString()).child(mQuestion.questionUid)
+                val testRef = dataBaseReference.child("favorite").child(user1!!.uid.toString())
                 Log.d("xxx",user1!!.uid.toString())
                 testRef.setValue(mQuestion.questionUid)
                 Toast.makeText(this, "テスメッセージです", Toast.LENGTH_SHORT).show()
