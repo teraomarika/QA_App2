@@ -211,6 +211,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else if (id == R.id.nav_compter) {
             mToolbar.title = "コンピューター"
             mGenre = 4
+        } else if (id == R.id.nav_favorite) {
+            if (user == null) {
+                mToolbar.title = "会員登録"
+            } else {
+                mToolbar.title = "お気に入り"
+            }
         }
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
