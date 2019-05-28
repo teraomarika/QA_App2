@@ -14,15 +14,11 @@ import android.widget.Toast
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_question_detail.*
 
 import java.util.HashMap
 import android.provider.MediaStore
+import com.google.firebase.database.*
 import org.w3c.dom.Comment
 import java.net.URI
 
@@ -35,6 +31,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     val user:FirebaseUser? = null
     private lateinit var toastButton: Button
     var mAuthListenr : FirebaseAuth.AuthStateListener? = null
+    var user1 = FirebaseAuth.getInstance().currentUser
     //private var toastButton: Button? = null
     var checkFlag: Boolean = false
     private val mEventListener = object : ChildEventListener {
@@ -98,7 +95,7 @@ class QuestionDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var user1 = FirebaseAuth.getInstance().currentUser
+        Log.d("user222",user1.toString())
         setContentView(R.layout.activity_question_detail)
         var toastButton: Button = findViewById(R.id.show_toast_button)
 
@@ -112,57 +109,70 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         var testRef = dataBaseReference.child("favorite").child(user1?.uid.toString())
 
-        testRef.addChildEventListener(object : ChildEventListener{
-            override fun onChildAdded(p0: DataSnapshot, previousChildName: String?) {
+        Log.d("aab","はじまり")
 
-                if(mQuestion.questionUid.toString() == p0.toString()) {
-                    Log.d("aaa","あり")
-                } else {
-                    Log.d("aaa","なし")
+        testRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                Log.d("aab","キャンセルとおる")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                //登録していなかったらログインページへ
+                if (user1 == null) {
+                    // ログインしていなければログイン画面に遷移させる
+                    val intent = Intent(applicationContext, LoginActivity::class.java)
+                    startActivity(intent)
+                }
+                Log.d("aab","とおる")
+                Log.d("aab",p0.childrenCount.toString())
+                toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
+                toastButton.text = "お気に入り登録をする"
+
+                if (p0.childrenCount > 0) {
+                    Log.d("ffff","ffff")
+                    Log.d("ffff",mQuestion.questionUid.toString())
+
+                    for (item in p0.children) {
+                        Log.d("fffaab",item.toString())
+                        if (item.key.toString() == mQuestion.questionUid.toString()) {
+                            Log.d("fffaaa",item.toString())
+                            checkFlag = true
+                            toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
+                            toastButton.text = "お気に入り登録を外す"
+                        }
+                    }
                 }
 
-            }
-
-            override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
-            }
-
-            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                Log.d("aab","とおる2")
 
             }
-
-            override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
-
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-
-            }
-
         })
         toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
         toastButton.text = "お気に入り登録をする"
+
         toastButton.setOnClickListener() {
             Log.d("aaaaa","fffff")
             if (checkFlag == false) {
                 checkFlag = true
                 // お気に入りに登録
 
-                var user1 = FirebaseAuth.getInstance().currentUser
-                val dataBaseReference = FirebaseDatabase.getInstance().reference
-                val testRef = dataBaseReference.child("favorite").child(user1!!.uid.toString())
                 Log.d("xxx",user1!!.uid.toString())
-                testRef.setValue(mQuestion.questionUid)
-                Toast.makeText(this, "テスメッセージです", Toast.LENGTH_SHORT).show()
+                testRef.child(mQuestion.questionUid).setValue(mQuestion.questionUid)
+                Toast.makeText(this, "お気に入りに登録しました", Toast.LENGTH_SHORT).show()
                 toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
                 toastButton.text = "お気に入り登録を外す"
                 toastButton.shadowRadius
             } else {
                 checkFlag = false
                 // お気に入りから外す
-                Toast.makeText(this, "テトメッセージです2", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "お気に入りからはずしました", Toast.LENGTH_SHORT).show()
                 toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
+                var delete = testRef.child(mQuestion.questionUid)
+                delete.setValue(null)
                 toastButton.text = "お気に入り登録をする"
                 toastButton.shadowRadius
+
+
             }
         }
         // 渡ってきたQuestionのオブジェクトを保持する
