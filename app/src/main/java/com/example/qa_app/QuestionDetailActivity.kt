@@ -105,7 +105,7 @@ class QuestionDetailActivity : AppCompatActivity() {
         var extras = intent.extras
 
         mQuestion = extras.get("question") as Question
-        mQuestion = extras.get("question") as Question
+        Log.d("quesitititi",mQuestion.title)
 
         var testRef = dataBaseReference.child("favorite").child(user1?.uid.toString())
 
@@ -157,7 +157,7 @@ class QuestionDetailActivity : AppCompatActivity() {
                 // お気に入りに登録
 
                 Log.d("xxx",user1!!.uid.toString())
-                testRef.child(mQuestion.questionUid).setValue(mQuestion.questionUid)
+                testRef.child(mQuestion.questionUid).setValue(mQuestion.title)
                 Toast.makeText(this, "お気に入りに登録しました", Toast.LENGTH_SHORT).show()
                 toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
                 toastButton.text = "お気に入り登録を外す"

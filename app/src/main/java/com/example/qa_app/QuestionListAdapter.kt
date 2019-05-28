@@ -3,6 +3,7 @@ package com.example.qa_app
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class QuestionsListAdapter(context: Context) : BaseAdapter() {
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        Log.d("FavoriteListAdapter", convertView.toString())
         var convertView = convertView
 
         if (convertView == null) {
