@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import android.util.Base64  //追加する
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
@@ -39,8 +40,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mFavoriteArrayList: ArrayList<Favorite>
     private lateinit var mAdapter: QuestionsListAdapter
     private lateinit var mAdapter2: FavoriteListAdapter
+    private lateinit var mNavigationView: NavigationView
     private lateinit var fab: FloatingActionButton
     private var mGenreRef: DatabaseReference? = null
+    var user1 = FirebaseAuth.getInstance().currentUser
     //private lateinit var modoruButton: Button
 
     private val mEventListener = object : ChildEventListener {
@@ -156,12 +159,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Log.d("mGenreは", mGenre.toString())
             }
             // ログイン済みのユーザーを取得する
-            val user = FirebaseAuth.getInstance().currentUser
 
-            if (user == null) {
+
+            if (user1 == null) {
                 // ログインしていなければログイン画面に遷移させる
-                //val intent = Intent(applicationContext, LoginActivity::class.java)
-                //startActivity(intent)
+                val intent = Intent(applicationContext, LoginActivity::class.java)
+                startActivity(intent)
             } else {
                 // ジャンルを渡して質問作成画面を起動する
                 val intent = Intent(applicationContext, QuestionSendActivity::class.java)
@@ -201,7 +204,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // --- ここまで追加する ---
             mListView.setOnItemClickListener { parent, view, position, id ->
                 // Questionのインスタンスを渡して質問詳細画面を起動する
-                Log.d("kidou","きどう")
+                Log.d("kidou",mQuestionArrayList[position].toString())
+                Log.d("kidou2",mQuestionArrayList[position].uid.toString())
                 val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
                 intent.putExtra("question", mQuestionArrayList[position])
                 startActivity(intent)
@@ -216,11 +220,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onResume() {
         super.onResume()
+        if(user1 != null) {
 
+            val menuNav = mNavigationView.menu
+            val tmp = menuNav.findItem(R.id.nav_favorite)
+            var aaa = tmp<MenuItem>.setVisibility(View.VISIBLE)
+        }
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
 
         // 1:趣味を既定の選択とする
         if (mGenre == 0) {
+            Log.d("orusu","orusu")
             onNavigationItemSelected(navigationView.menu.getItem(0))
         }
         if(mGenre == 99) {
@@ -301,6 +311,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 //mListView.adapter = mAdapter2
                 //mListView2 = findViewById(R.id.listView3)
                 mListView2.adapter = mAdapter2
+                mListView2.setOnItemClickListener { parent, view, position, id ->
+                    // Questionのインスタンスを渡して質問詳細画面を起動する
+                    Log.d("kidou","きどう")
+                    val intent = Intent(applicationContext, FavoriteDetailActivity::class.java)
+                    Log.d("kata",mFavoriteArrayList[position].id.toString())
+                    intent.putExtra("favorite", mFavoriteArrayList[position].id)
+                    startActivity(intent)
+                }
+
+
                 var modoruButton: Button = findViewById(R.id.modoru_button)
                 modoruButton.setOnClickListener() {
                     val intent = Intent(applicationContext, MainActivity::class.java)

@@ -15,6 +15,7 @@
                 android:id="@+id/nav_compter"
                 android:title="コンピューター"/>
         <item
+                android:visible="false"
                 android:id="@+id/nav_favorite"
                 android:title="お気に入り"/>
     </group>

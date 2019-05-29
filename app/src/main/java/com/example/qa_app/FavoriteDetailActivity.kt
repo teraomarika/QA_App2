@@ -18,13 +18,12 @@ import kotlinx.android.synthetic.main.activity_question_detail.*
 
 import java.util.HashMap
 import android.provider.MediaStore
-import android.support.design.widget.NavigationView
 import com.google.firebase.database.*
 import org.w3c.dom.Comment
 import java.net.URI
 
 
-class QuestionDetailActivity : AppCompatActivity() {
+class FavoriteDetailActivity : AppCompatActivity() {
 
     private lateinit var mQuestion: Question
     private lateinit var mFavorite: Favorite
@@ -99,18 +98,15 @@ class QuestionDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.d("user222",user1.toString())
         setContentView(R.layout.activity_question_detail)
+        Log.d("aaa","qqq")
 
-        if(user1 != null) {
-            Log.d("aaa","qqq")
-            var toastButton: Button = findViewById(R.id.show_toast_button)
-            toastButton.setVisibility(View.VISIBLE)
-        }
         //val dataBaseReference = FirebaseDatabase.getInstance().reference
 
         val dataBaseReference = FirebaseDatabase.getInstance().reference
         var extras = intent.extras
 
-        mQuestion = extras.get("question") as Question
+        var tmp = extras.get("favorite")
+
         //mQuestion = extras.get("favorite") as Favorite
         Log.d("quesitititi",mQuestion.title)
 
@@ -128,10 +124,11 @@ class QuestionDetailActivity : AppCompatActivity() {
 
                 Log.d("aab","とおる")
                 Log.d("aab",p0.childrenCount.toString())
-                    if(user != null) {
-                        toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
-                        toastButton.text = "お気に入り登録をする"
-                    }
+                if(user1 != null) {
+                    toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
+                    Log.d("aaabbb","sss")
+                    toastButton.text = "お気に入り登録をする"
+                }
                 if (p0.childrenCount > 0) {
                     Log.d("ffff","ffff")
                     Log.d("ffff",mQuestion.questionUid.toString())
@@ -141,8 +138,6 @@ class QuestionDetailActivity : AppCompatActivity() {
                         if (item.key.toString() == mQuestion.questionUid.toString()) {
                             Log.d("fffaaa",item.toString())
                             checkFlag = true
-                            var toastButton: Button = findViewById(R.id.show_toast_button)
-                            toastButton.setVisibility(View.VISIBLE)
                             toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
                             toastButton.text = "お気に入り登録を外す"
                         }
@@ -154,10 +149,8 @@ class QuestionDetailActivity : AppCompatActivity() {
             }
         })
         if(user1 != null) {
-            var toastButton: Button = findViewById(R.id.show_toast_button)
-            toastButton.setVisibility(View.VISIBLE)
             toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
-            toastButton.text = "お気に入り登録をする"
+            toastButton.text = "お気に入りに登録をする"
 
             toastButton.setOnClickListener() {
                 if (user1 == null) {
@@ -194,6 +187,11 @@ class QuestionDetailActivity : AppCompatActivity() {
         }
         // 渡ってきたQuestionのオブジェクトを保持する
 
+        //println(mQuestion.questionUid)
+        //val data = HashMap<String, String>()
+        //data["uid"] = FirebaseAuth.getInstance().currentUser!!.uid
+        //data.setValue(mQuestion.questionUid)
+        Log.d("ccccc", "cccc")
         title = mQuestion.title
 
         // ListViewの準備
@@ -209,11 +207,10 @@ class QuestionDetailActivity : AppCompatActivity() {
 
             if (user == null) {
                 // ログインしていなければログイン画面に遷移させる
-                //val intent = Intent(applicationContext, LoginActivity::class.java)
-                //startActivity(intent)
+                val intent = Intent(applicationContext, LoginActivity::class.java)
+                startActivity(intent)
             } else {
-                //toastButton1.isEnabled = true
-                //toastButton1.text = "お気に入り登録をする"
+
                 // Questionを渡して回答作成画面を起動する
                 // --- ここから ---
                 val intent = Intent(applicationContext, AnswerSendActivity::class.java)
@@ -232,17 +229,6 @@ class QuestionDetailActivity : AppCompatActivity() {
 
 
     }
-
-    override fun onStart() {
-        super.onStart()
-        if(user1 != null) {
-            Log.d("aaa","qqq")
-            var toastButton: Button = findViewById(R.id.show_toast_button)
-            toastButton.setVisibility(View.VISIBLE)
-        }
-    }
-
-
 
     fun getRealPathFromURI(uri: Uri): String {
         val projection = arrayOf(MediaStore.Images.Media.DATA)
