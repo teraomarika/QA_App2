@@ -234,6 +234,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             //mFavoriteArrayList = ArrayList<Favorite>()
             //mAdapter2.notifyDataSetChanged()
         }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -294,11 +296,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if(mGenre != 99) {
                 mListView.adapter = mAdapter
             } else {
-                setContentView(R.layout.activity_main)
-                mListView2 = findViewById(R.id.listView)
+                setContentView(R.layout.content_main2)
+                mListView2 = findViewById(R.id.listView2)
                 //mListView.adapter = mAdapter2
                 //mListView2 = findViewById(R.id.listView3)
                 mListView2.adapter = mAdapter2
+                var modoruButton: Button = findViewById(R.id.modoru_button)
+                modoruButton.setOnClickListener() {
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    startActivity(intent)
+                }
+
             }
 
 

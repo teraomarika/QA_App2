@@ -56,7 +56,7 @@ class FavoriteListAdapter(context: Context) : BaseAdapter() {
         //titleText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50.0F)
         //titleText.setGravity(Gravity.LEFT)
         //titleText.layoutDirection
-        titleText.text = mFavoriteArrayList[position].title
+        titleText.text = "★ " + mFavoriteArrayList[position].title
 
 
         return convertView
