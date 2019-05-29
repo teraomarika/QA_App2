@@ -118,11 +118,7 @@ class QuestionDetailActivity : AppCompatActivity() {
 
             override fun onDataChange(p0: DataSnapshot) {
                 //登録していなかったらログインページへ
-                if (user1 == null) {
-                    // ログインしていなければログイン画面に遷移させる
-                    val intent = Intent(applicationContext, LoginActivity::class.java)
-                    startActivity(intent)
-                }
+
                 Log.d("aab","とおる")
                 Log.d("aab",p0.childrenCount.toString())
                 toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
@@ -151,28 +147,35 @@ class QuestionDetailActivity : AppCompatActivity() {
         toastButton.text = "お気に入り登録をする"
 
         toastButton.setOnClickListener() {
-            Log.d("aaaaa","fffff")
-            if (checkFlag == false) {
-                checkFlag = true
-                // お気に入りに登録
-
-                Log.d("xxx",user1!!.uid.toString())
-                testRef.child(mQuestion.questionUid).setValue(mQuestion.title)
-                Toast.makeText(this, "お気に入りに登録しました", Toast.LENGTH_SHORT).show()
-                toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
-                toastButton.text = "お気に入り登録を外す"
-                toastButton.shadowRadius
+            if (user1 == null) {
+                // ログインしていなければログイン画面に遷移させる
+                val intent = Intent(applicationContext, LoginActivity::class.java)
+                startActivity(intent)
             } else {
-                checkFlag = false
-                // お気に入りから外す
-                Toast.makeText(this, "お気に入りからはずしました", Toast.LENGTH_SHORT).show()
-                toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
-                var delete = testRef.child(mQuestion.questionUid)
-                delete.setValue(null)
-                toastButton.text = "お気に入り登録をする"
-                toastButton.shadowRadius
+                Log.d("aaaaa", "fffff")
+                if (checkFlag == false) {
+                    checkFlag = true
+                    // お気に入りに登録
+
+                    Log.d("xxx", user1?.uid.toString())
+                    testRef.child(mQuestion.questionUid).setValue(mQuestion.title)
+                    Toast.makeText(this, "お気に入りに登録しました", Toast.LENGTH_SHORT).show()
+                    toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
+                    toastButton.text = "お気に入り登録を外す"
+                    toastButton.shadowRadius
+                } else {
+
+                    checkFlag = false
+                    // お気に入りから外す
+                    Toast.makeText(this, "お気に入りからはずしました", Toast.LENGTH_SHORT).show()
+                    toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
+                    var delete = testRef.child(mQuestion.questionUid)
+                    delete.setValue(null)
+                    toastButton.text = "お気に入り登録をする"
+                    toastButton.shadowRadius
 
 
+                }
             }
         }
         // 渡ってきたQuestionのオブジェクトを保持する

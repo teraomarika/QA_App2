@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import android.util.Base64  //追加する
 import android.util.Log
+import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 
@@ -38,8 +39,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mFavoriteArrayList: ArrayList<Favorite>
     private lateinit var mAdapter: QuestionsListAdapter
     private lateinit var mAdapter2: FavoriteListAdapter
-
+    private lateinit var fab: FloatingActionButton
     private var mGenreRef: DatabaseReference? = null
+    //private lateinit var modoruButton: Button
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
@@ -132,29 +134,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        //if(mGenre != 99) {
+        setContentView(R.layout.activity_main)
         if(mGenre != 99) {
-            setContentView(R.layout.activity_main)
-        } else {
-            setContentView(R.layout.activity_favorite)
+            fab = findViewById<FloatingActionButton>(R.id.fab)
         }
+            //} else {
+            //setContentView(R.layout.activity_favorite)
+        //}
         mToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(mToolbar)
 
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
+
         fab.setOnClickListener { view ->
             // ジャンルを選択していない場合（mGenre == 0）はエラーを表示するだけ
             if (mGenre == 0) {
                 Snackbar.make(view, "ジャンルを選択して下さい", Snackbar.LENGTH_LONG).show()
             } else {
-
+                Log.d("mGenreは", mGenre.toString())
             }
             // ログイン済みのユーザーを取得する
             val user = FirebaseAuth.getInstance().currentUser
 
             if (user == null) {
                 // ログインしていなければログイン画面に遷移させる
-                val intent = Intent(applicationContext, LoginActivity::class.java)
-                startActivity(intent)
+                //val intent = Intent(applicationContext, LoginActivity::class.java)
+                //startActivity(intent)
             } else {
                 // ジャンルを渡して質問作成画面を起動する
                 val intent = Intent(applicationContext, QuestionSendActivity::class.java)
@@ -166,7 +173,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // ナビゲーションドロワーの設定
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(this, drawer, mToolbar, R.string.app_name, R.string.app_name)
-        drawer.addDrawerListener(toggle)
+            //drawer.addDrawerListener(toggle)
+        Log.d("addDrawerListener",toggle.toString())
+
+        //drawer.addDrawer
         toggle.syncState()
 
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
@@ -177,28 +187,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDatabaseReference = FirebaseDatabase.getInstance().reference
 
         // ListViewの準備
-        if(mGenre != 99) {
+
             mListView = findViewById(R.id.listView)
-        } else {
-            mListView2 = findViewById(R.id.listView2)
-        }
+
+            //mListView2 = findViewById(R.id.listView2)
+
             mAdapter = QuestionsListAdapter(this)
             mAdapter2 = FavoriteListAdapter(this)
             mQuestionArrayList = ArrayList<Question>()
             mFavoriteArrayList = ArrayList<Favorite>()
             Log.d("aaa", mQuestionArrayList.toString())
-            mAdapter.notifyDataSetChanged()
+
             // --- ここまで追加する ---
             mListView.setOnItemClickListener { parent, view, position, id ->
                 // Questionのインスタンスを渡して質問詳細画面を起動する
+                Log.d("kidou","きどう")
                 val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
                 intent.putExtra("question", mQuestionArrayList[position])
                 startActivity(intent)
             }
+
             Log.d("else","else")
-            mAdapter2 = FavoriteListAdapter(this)
-            mFavoriteArrayList = ArrayList<Favorite>()
-            mAdapter2.notifyDataSetChanged()
+
+        mAdapter.notifyDataSetChanged()
+        mAdapter2.notifyDataSetChanged()
 
     }
 
@@ -213,12 +225,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         if(mGenre == 99) {
             Log.d("else","else")
-            setContentView(R.layout.activity_favorite)
-            mListView2 = findViewById(R.id.listView2)
+            //setContentView(R.layout.activity_favorite)
+            onNavigationItemSelected(navigationView.menu.getItem(99))
 
-            mAdapter2 = FavoriteListAdapter(this)
-            mFavoriteArrayList = ArrayList<Favorite>()
-            mAdapter2.notifyDataSetChanged()
+            //mListView2 = findViewById(R.id.listView2)
+
+            //mAdapter2 = FavoriteListAdapter(this)
+            //mFavoriteArrayList = ArrayList<Favorite>()
+            //mAdapter2.notifyDataSetChanged()
         }
     }
 
@@ -257,6 +271,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mGenre = 4
         } else if (id == R.id.nav_favorite) {
             if (user == null) {
+
+                // ログインしていなければログイン画面に遷移させる
+                val intent = Intent(applicationContext, LoginActivity::class.java)
+                startActivity(intent)
                 mToolbar.title = "会員登録"
             } else {
                 mToolbar.title = "お気に入り"
@@ -270,17 +288,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // --- ここから ---
         // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
             mQuestionArrayList.clear()
+            mFavoriteArrayList.clear()
             mAdapter.setQuestionArrayList(mQuestionArrayList)
+            mAdapter2.setFavoriteArrayList(mFavoriteArrayList)
             if(mGenre != 99) {
                 mListView.adapter = mAdapter
             } else {
-                setContentView(R.layout.activity_favorite)
-                mListView2 = findViewById(R.id.listView2)
+                setContentView(R.layout.activity_main)
+                mListView2 = findViewById(R.id.listView)
+                //mListView.adapter = mAdapter2
                 //mListView2 = findViewById(R.id.listView3)
                 mListView2.adapter = mAdapter2
             }
-            mFavoriteArrayList.clear()
-            mAdapter2.setFavoriteArrayList(mFavoriteArrayList)
+
+
 
             // 選択したジャンルにリスナーを登録する
             if (mGenreRef != null) {

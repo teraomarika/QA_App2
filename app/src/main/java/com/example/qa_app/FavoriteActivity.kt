@@ -142,7 +142,7 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         })
         // ListViewの準備
-        mListView = findViewById(R.id.listView)
+        mListView = findViewById(R.id.listView2)
         mAdapter = QuestionsListAdapter(this)
         mQuestionArrayList = ArrayList<Question>()
 

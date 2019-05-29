@@ -41,7 +41,12 @@ class FavoriteListAdapter(context: Context) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         Log.d("FavoriteListAdapter", convertView.toString())
         var convertView = convertView
+        if(position == 0) {
+            Log.d("zero", "zero")
 
+        } else {
+            Log.d("not zero", "not zero")
+        }
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.list_favorites, parent, false)
             Log.d("FavoriteListAdapter2", convertView.toString())
@@ -49,8 +54,8 @@ class FavoriteListAdapter(context: Context) : BaseAdapter() {
 
         val titleText = convertView!!.findViewById<View>(R.id.nameTextView) as TextView
         //titleText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50.0F)
-        titleText.setGravity(Gravity.LEFT)
-        titleText.layoutDirection
+        //titleText.setGravity(Gravity.LEFT)
+        //titleText.layoutDirection
         titleText.text = mFavoriteArrayList[position].title
 
 

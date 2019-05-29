@@ -8,18 +8,12 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
-                android:gravity="left|top"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:context="com.example.qa_app.FavoriteActivity"
+                tools:context="com.example.qa_app.MainActivity"
                 tools:showIn="@layout/app_bar_favorite">
 
     <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="30dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:paddingTop="30dp"
-
             android:id="@+id/listView2" />
 </RelativeLayout>
