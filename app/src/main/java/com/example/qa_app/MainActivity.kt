@@ -25,6 +25,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
+import kotlinx.android.synthetic.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -221,10 +222,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onResume() {
         super.onResume()
         if(user1 != null) {
-
+            mNavigationView = findViewById(R.id.nav_view)
             val menuNav = mNavigationView.menu
             val tmp = menuNav.findItem(R.id.nav_favorite)
-            var aaa = tmp<MenuItem>.setVisibility(View.VISIBLE)
+            tmp.setVisible(true)
         }
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
 
