@@ -24,6 +24,8 @@ import android.widget.TextView
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -41,6 +43,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mAdapter2: FavoriteListAdapter
     private lateinit var mNavigationView: NavigationView
     private lateinit var fab: FloatingActionButton
+    var bbb:List<String> = mutableListOf()
+    var ccc:Map<String,String> = mutableMapOf()
     private lateinit var params: FloatArray
     private var mGenreRef: DatabaseReference? = null
 
@@ -86,8 +90,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 mQuestionArrayList.add(question)
                 mAdapter.notifyDataSetChanged()
             } else {
-                Log.d("datano",dataSnapshot.toString())
+                //Log.d("datano",dataSnapshot.toString())
+                val favoriteRef = FirebaseDatabase.getInstance().reference
 
+                var aaa = dataSnapshot.value as Map<String,String>
+                for (item2 in aaa) {
+                    if(item2.key.contains("genre")) {
+                            //Log.d("genreは",item2.value.toString())
+                            var tmp2 = favoriteRef.child("contents").child(item2.value.toString())
+                            tmp2.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onCancelled(p0: DatabaseError) {
+
+                                }
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    //Log.d("contents",p0.value.toString())
+                                    //bbb = p0.value as List<String>
+                                    if (p0.value !is String) {
+                                        //bbb = p0.value as List<String>
+                                    } else {
+                                        ccc.  p0.value as Map<String, String>
+                                    }
+                                }
+                            })
+
+
+                    }
+                }
+                Log.d("bbbに入ったもの",bbb.toString())
+                Log.d("cccに入ったもの",bbb.toString())
                 /*
                 mDatabaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(p0: DatabaseError) {
