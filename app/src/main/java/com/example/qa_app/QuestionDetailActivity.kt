@@ -34,6 +34,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var toastButton: Button
     var mAuthListenr : FirebaseAuth.AuthStateListener? = null
     var user1 = FirebaseAuth.getInstance().currentUser
+    val favorite_data = HashMap<String, String>()
     //private var toastButton: Button? = null
     var checkFlag: Boolean = false
     private val mEventListener = object : ChildEventListener {
@@ -61,7 +62,6 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>
-            Log.d("っっっっっ","aqaqqqaqaqaqaqaqa")
             val answerUid = dataSnapshot.key ?: ""
 
             for (answer in mQuestion.answers) {
@@ -97,26 +97,21 @@ class QuestionDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("user222",user1.toString())
         setContentView(R.layout.activity_question_detail)
 
         if(user1 != null) {
-            Log.d("aaa","qqq")
             var toastButton: Button = findViewById(R.id.show_toast_button)
             toastButton.setVisibility(View.VISIBLE)
         }
-        //val dataBaseReference = FirebaseDatabase.getInstance().reference
 
         val dataBaseReference = FirebaseDatabase.getInstance().reference
         var extras = intent.extras
 
         mQuestion = extras.get("question") as Question
+
         //mQuestion = extras.get("favorite") as Favorite
-        Log.d("quesitititi",mQuestion.title)
 
         var testRef = dataBaseReference.child("favorite").child(user1?.uid.toString())
-
-        Log.d("aab","はじまり")
 
         testRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -126,8 +121,6 @@ class QuestionDetailActivity : AppCompatActivity() {
             override fun onDataChange(p0: DataSnapshot) {
                 //登録していなかったらログインページへ
 
-                Log.d("aab","とおる")
-                Log.d("aab",p0.childrenCount.toString())
                     if(user != null) {
                         toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
                         toastButton.text = "お気に入り登録をする"
@@ -171,7 +164,13 @@ class QuestionDetailActivity : AppCompatActivity() {
                         // お気に入りに登録
 
                         Log.d("xxx", user1?.uid.toString())
-                        testRef.child(mQuestion.questionUid).setValue(mQuestion.title)
+                        favorite_data["title"] = mQuestion.title
+                        favorite_data["name"] = mQuestion.name
+                        favorite_data["genre"] = mQuestion.genre.toString()
+                        favorite_data["uid"] = mQuestion.questionUid
+
+
+                        testRef.child(mQuestion.questionUid).setValue(favorite_data)
                         Toast.makeText(this, "お気に入りに登録しました", Toast.LENGTH_SHORT).show()
                         toastButton.setBackgroundColor(Color.rgb(0, 204, 255))
                         toastButton.text = "お気に入り登録を外す"
@@ -209,8 +208,9 @@ class QuestionDetailActivity : AppCompatActivity() {
 
             if (user == null) {
                 // ログインしていなければログイン画面に遷移させる
-                //val intent = Intent(applicationContext, LoginActivity::class.java)
-                //startActivity(intent)
+                val intent = Intent(applicationContext, LoginActivity::class.java)
+                startActivity(intent)
+
             } else {
                 //toastButton1.isEnabled = true
                 //toastButton1.text = "お気に入り登録をする"
@@ -222,9 +222,6 @@ class QuestionDetailActivity : AppCompatActivity() {
                 // ---  ここまで ---
             }
         }
-
-
-
 
 
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)

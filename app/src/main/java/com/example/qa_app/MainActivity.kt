@@ -4,28 +4,26 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
+
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.view.Menu
-import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import android.support.design.widget.Snackbar
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import android.util.Base64  //追加する
 import android.util.Log
-import android.view.View
+import android.view.*
+import android.view.ViewGroup.LayoutParams.FILL_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -43,13 +41,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mAdapter2: FavoriteListAdapter
     private lateinit var mNavigationView: NavigationView
     private lateinit var fab: FloatingActionButton
+    private lateinit var params: FloatArray
     private var mGenreRef: DatabaseReference? = null
+
     var user1 = FirebaseAuth.getInstance().currentUser
+
     //private lateinit var modoruButton: Button
+    //val overlayView: ViewGroup by lazy { LayoutInflater.from(this).inflate(R.layout.activity_main, null) as ViewGroup }
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-            Log.d("testtest", "koko")
+
             if (mGenre != 99) {
                 val map = dataSnapshot.value as Map<String, String>
                 val title = map["title"] ?: ""
@@ -84,6 +86,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 mQuestionArrayList.add(question)
                 mAdapter.notifyDataSetChanged()
             } else {
+                Log.d("datano",dataSnapshot.toString())
+
+                /*
+                mDatabaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+
+                    }
+                    override fun onDataChange(p0: DataSnapshot) {
+
+                    }
+                })
                 val map = dataSnapshot.value
                 val keydata = dataSnapshot.key
                 Log.d("key",keydata.toString())
@@ -93,6 +106,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 )
                 mFavoriteArrayList.add(favorite)
                 mAdapter2.notifyDataSetChanged()
+                */
+
             }
         }
 
@@ -162,10 +177,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // ログイン済みのユーザーを取得する
 
 
-            if (user1 == null) {
+            if (user1 == null || mGenre != 99) {
                 // ログインしていなければログイン画面に遷移させる
                 val intent = Intent(applicationContext, LoginActivity::class.java)
                 startActivity(intent)
+                mAdapter.notifyDataSetChanged()
             } else {
                 // ジャンルを渡して質問作成画面を起動する
                 val intent = Intent(applicationContext, QuestionSendActivity::class.java)
@@ -175,11 +191,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         // ナビゲーションドロワーの設定
+        //val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        //val toggle = ActionBarDrawerToggle(this, drawer, mToolbar, R.string.app_name, R.string.app_name)
+            //drawer.addDrawerListener(toggle)
+        //Log.d("addDrawerListener",toggle.toString())
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(this, drawer, mToolbar, R.string.app_name, R.string.app_name)
-            //drawer.addDrawerListener(toggle)
-        Log.d("addDrawerListener",toggle.toString())
-
         //drawer.addDrawer
         toggle.syncState()
 
@@ -221,12 +238,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onResume() {
         super.onResume()
+        mNavigationView = findViewById(R.id.nav_view)
+        mNavigationView.setNavigationItemSelectedListener(this)
+
+
+        var user1 = FirebaseAuth.getInstance().currentUser
+        Log.d("aaaaa",user1.toString())
         if(user1 != null) {
-            mNavigationView = findViewById(R.id.nav_view)
+
             val menuNav = mNavigationView.menu
             val tmp = menuNav.findItem(R.id.nav_favorite)
             tmp.setVisible(true)
+            // 即時反映したい
+        } else {
+            val menuNav = mNavigationView.menu
+            val tmp = menuNav.findItem(R.id.nav_favorite)
+            tmp.setVisible(false)
         }
+
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
 
         // 1:趣味を既定の選択とする
