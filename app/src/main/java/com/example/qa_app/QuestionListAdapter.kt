@@ -22,14 +22,17 @@ class QuestionsListAdapter(context: Context) : BaseAdapter() {
     }
 
     override fun getCount(): Int {
+        Log.d("順番","getCount")
         return mQuestionArrayList.size
     }
 
     override fun getItem(position: Int): Any {
+        Log.d("順番","getItem")
         return mQuestionArrayList[position]
     }
 
     override fun getItemId(position: Int): Long {
+        Log.d("順番","getItemId")
         return position.toLong()
     }
 

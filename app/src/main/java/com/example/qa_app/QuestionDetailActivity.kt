@@ -183,6 +183,7 @@ class QuestionDetailActivity : AppCompatActivity() {
                         toastButton.setBackgroundColor(Color.rgb(192, 192, 192))
                         var delete = testRef.child(mQuestion.questionUid)
                         delete.setValue(null)
+                        mAdapter.notifyDataSetChanged()
                         toastButton.text = "お気に入り登録をする"
                         toastButton.shadowRadius
 
