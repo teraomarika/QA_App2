@@ -195,6 +195,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // ログイン済みのユーザーを取得する
 
 
+
+
             if (user1 == null || mGenre != 99) {
                 // ログインしていなければログイン画面に遷移させる
                 val intent = Intent(applicationContext, LoginActivity::class.java)
@@ -212,7 +214,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(this, drawer, mToolbar, R.string.app_name, R.string.app_name)
-        //drawer.addDrawer
+        drawer.addDrawerListener(toggle)
         toggle.syncState()
 
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
@@ -226,13 +228,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             mListView = findViewById(R.id.listView)
 
-            //mListView2 = findViewById(R.id.listView2)
+
 
             mAdapter = QuestionsListAdapter(this)
             mQuestionArrayList = ArrayList<Question>()
-            //mAdapter2 = FavoriteListAdapter(this)
-            //mFavoriteArrayList = ArrayList<Favorite>()
-            //Log.d("aaa", mQuestionArrayList.toString())
+
 
             // --- ここまで追加する ---
             mListView.setOnItemClickListener { parent, view, position, id ->
@@ -283,6 +283,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 override fun onDataChange(p0: DataSnapshot) {
                     ccc = p0.value as Map<String, String>
                 }
+
             })
         }
     }
@@ -335,28 +336,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
 
-        // --- ここから ---
-        // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
+
             mQuestionArrayList.clear()
             mAdapter.setQuestionArrayList(mQuestionArrayList)
             //if(mGenre != 99) {
             mListView.adapter = mAdapter
-            /*} else {
-                setContentView(R.layout.content_main2)
-                mListView2 = findViewById(R.id.listView2)
-                //mListView.adapter = mAdapter2
-                //mListView2 = findViewById(R.id.listView3)
-                mListView2.adapter = mAdapter2
-                mListView2.setOnItemClickListener { parent, view, position, id ->
-                    // Questionのインスタンスを渡して質問詳細画面を起動する
-                    Log.d("kidou","きどう")
-                    val intent = Intent(applicationContext, FavoriteDetailActivity::class.java)
-                    Log.d("kata",mFavoriteArrayList[position].id.toString())
-                    intent.putExtra("favorite", mFavoriteArrayList[position].id)
-                    startActivity(intent)
-                }
-
-            }*/
 
             // 選択したジャンルにリスナーを登録する
             if (mGenreRef != null) {

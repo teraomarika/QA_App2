@@ -40,7 +40,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>
-            Log.d("aqaqaqaqaqaqa","aqaqqqaqaqaqaqaqa")
+
             val answerUid = dataSnapshot.key ?: ""
 
             for (answer in mQuestion.answers) {

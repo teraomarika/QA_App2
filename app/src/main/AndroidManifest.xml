@@ -32,6 +32,7 @@
         <activity android:name=".LoginActivity"/>
         <activity android:name=".SettingActivity">
 
+
         </activity>
         <activity android:name=".QuestionSendActivity">
         </activity>
